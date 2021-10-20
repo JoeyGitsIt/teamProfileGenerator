@@ -1,71 +1,119 @@
-const inquirer = require('inquirer');
-const fs = require('fs');
+const inquirer = require("inquirer");
+const fs = require("fs");
+const Employee = require("./lib/Employee");
+const Engineer = require("./lib/Engineer");
+const Intern = require("./lib/Intern");
+const Manager = require("./lib/Manager");
+// const { createPromptModule } = require("inquirer");
+// const { create } = require("domain");
 
 // Make video explaining how code works or the application works???
 // have to put the inquirer question loops for type of employee into functions
 // Use 10-OOP mini-project as a reference for the homework
+let teamArray = [];
 
-inquirer
-  .prompt([
-    {
-      // Manager's Name
-      type: 'input',
-      message: 'What is the team manager\'s name?',
-      name: 'managerName',
-    },
-    {
-      // Manager's employee id
-      type: 'input',
-      message: 'Team manager\'s employee id:',
-      name: 'managerid',
-    },
-    {
-      // Manager email
-      type: 'input',
-      message: 'Team manager\'s email address:',
-      name: 'managerEmail',
-    },
-    {
-      // Team manager office number
-      type: 'input',
-      message: 'Enter team managers office number:',
-      name: 'usage',
-    },
-    {
-      // Add a team member
-      type: 'list',
-      message: 'Add a member to the team?',
-      choices: ["Engineer","Intern","Build my team"],
-      name: 'teamMember',
-    },
+createEmployee("Manager");
 
-  ])
-  .then((response) => {
+function createEmployee(role) {
+  inquirer
+    .prompt([
+      {
+        // Manager's Name
+        type: "input",
+        message: `What is the ${role}'s name?`,
+        name: "name",
+      },
+      {
+        // Manager's employee id
+        type: "input",
+        message: `${role}'s employee id:`,
+        name: "id",
+      },
+      {
+        // Manager email
+        type: "input",
+        message: `${role}'s email address:`,
+        name: "email",
+      },
+      {
+        // Team manager office number
+        type: "input",
+        // sus
+        when: (answers) => role == "Manager",
+        message: `Enter team managers office number:`,
+        name: "managerOfficeNum",
+      },
+      {
+        // Team manager office number
+        type: "input",
+        when: (answers) => role == "Engineer",
+        message: `Enter github username:`,
+        name: "engineerGithub",
+      },
+      {
+        // Team manager office number
+        type: "input",
+        when: (answers) => role == "Intern",
+        message: `Enter intern's school:`,
+        name: "internSchool",
+      },
+    ])
+    .then((response) => {
+      // create a new class with the response according to role
+      const employeeInfo = {
+        name: response.mame,
+        id: response.id,
+        email: response.email,
+      };
+      switch (role) {
+        case "Manager":
+          teamArray.push(new Manager(employeeInfo, response.managerOfficeNum));
+          break;
+        case "Engineer":
+          teamArray.push(new Engineer(employeeInfo, response.engineerGithub));
+          break;
+        case "Intern":
+          teamArray.push(new Intern(employeeInfo, response.internSchool));
+          break;
+      }
+      createRole();
+    });
+}
 
-    // let licenseLogo = '';
-    // console.log(response);
-    switch(response.license) {
-      case 'Engineer':
-        inquirer
-          .prompt([
-            {
-              // Manager's Name
-              type: 'input',
-              message: 'What is the team manager\'s name?',
-              name: 'managerName',
-            }]);
-        break;
-      case 'MIT':
-        licenseLogo = '[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)';
-        break;
-      case 'GNU GPLv3':
-        licenseLogo = '[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)';
-        break;
-    }
-  }
-  );
+function createRole() {
+  inquirer
+    .prompt([
+      {
+        // Add a team member
+        type: "list",
+        message: "Add a member to the team?",
+        choices: ["Engineer", "Intern", "Build my team"],
+        name: "teamMember",
+      },
+    ])
+    .then((answers) => {
+      if (answers.teamMember !== "Build my team") {
+        createEmployee(answers.teamMember);
+      }
+      else {
+        for (var i = 0; i < teamArray.length; i++) {
+          teamArray[i]
+        }
+          fs.writeFile(`index.html`, 
+`
+<!DOCTYPE html>
+<html lang="en-US">
 
-  //   fs.writeFile(`${response.title}.md`, (err) => {
-  //     err ? console.error(err) : console.log('Success!')
-  //   })
-  // });
+<head>
+  <meta charset="UTF-8">
+  <title>My Team</title>
+  <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+
+
+`        
+          ,(err) => {
+          err ? console.error(err) : console.log('Success!')
+      }
+    });
+}
