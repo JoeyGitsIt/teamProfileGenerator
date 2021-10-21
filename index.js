@@ -61,7 +61,7 @@ function createEmployee(role) {
     .then((response) => {
       // create a new class with the response according to role
       const employeeInfo = {
-        name: response.mame,
+        name: response.name,
         id: response.id,
         email: response.email,
       };
@@ -92,28 +92,73 @@ function createRole() {
       },
     ])
     .then((answers) => {
+      let specificAttribute;
+      let specificAttributeTitle;
       if (answers.teamMember !== "Build my team") {
         createEmployee(answers.teamMember);
-      }
-      else {
+      } else {
         for (var i = 0; i < teamArray.length; i++) {
-          teamArray[i]
+          console.log(teamArray[i]);
+          switch (teamArray[i].getRole()) {
+            case "Manager":
+              specificAttribute = teamArray[i].getOfficeNumber();
+              specificAttributeTitle = "Office Number:";
+              break;
+            case "Engineer":
+              specificAttribute = teamArray[i].getGithub();
+              specificAttributeTitle = "Github:";
+              break;
+            case "Intern":
+              specificAttribute = teamArray[i].getSchool();
+              specificAttributeTitle = "School:";
+              break;
+          }
+
+          outputFile += `
+<div class="col-md-4" style="width:33%; padding: 20px 0;">
+  <div class="card">
+    <h5 class="card-header" style="background:navy; color:white;">
+      ${teamArray[i].getName()}
+      </br>
+      ${teamArray[i].getRole()}
+    </h5>
+    <div class="card-body">
+      <p class="card-text">ID: ${teamArray[i].getId()}</p>
+      <p class="card-text">Email:  ${teamArray[i].getEmail()}</p>
+      <p class="card-text">${specificAttributeTitle} ${specificAttribute}</p>
+    </div>
+  </div>
+</div>
+`;
         }
-          fs.writeFile(`index.html`, 
-`
+        outputFile += `
+        </div>
+        </div>
+      </div>
+    </div>
+        `;
+        fs.writeFile(`index.html`, outputFile, (err) => {
+          err ? console.error(err) : console.log("Success!");
+        });
+      }
+    });
+}
+
+insertIntoFile = "";
+outputFile = `
 <!DOCTYPE html>
 <html lang="en-US">
 
 <head>
   <meta charset="UTF-8">
   <title>My Team</title>
-  <link rel="stylesheet" href="./assets/css/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>
 
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+    <h3 class="text-center" style="padding-top: 1%; height:15%; background:red; color:white;">My Team</h3>
+			<div class="row" style="margin: 0 20%">
 
-`        
-          ,(err) => {
-          err ? console.error(err) : console.log('Success!')
-      }
-    });
-}
+`;
