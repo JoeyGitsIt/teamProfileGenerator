@@ -7,9 +7,6 @@ const Manager = require("./lib/Manager");
 // const { createPromptModule } = require("inquirer");
 // const { create } = require("domain");
 
-// Make video explaining how code works or the application works???
-// have to put the inquirer question loops for type of employee into functions
-// Use 10-OOP mini-project as a reference for the homework
 let teamArray = [];
 
 createEmployee("Manager");
